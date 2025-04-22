@@ -100,9 +100,9 @@ const GoogleDriveIntegration = ({
   const initClient = () => {
     window.gapi.client
       .init({
-        apiKey: "AIzaSyCWh_riqqyOsbl8NsfAsI1w76_3Ti_sYA0",
+        apiKey: "-------",
         clientId:
-          "705870104088-sjg8d5b01ht6foqsco53k5aud6ic7gi3.apps.googleusercontent.com",
+          "7xxx-yyyyyy.apps.googleusercontent.com",
         discoveryDocs: [
           "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
         ],
