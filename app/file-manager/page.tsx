@@ -1,50 +1,70 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-
 import Filemanager from "@components/Filemanager/Filemanager";
 import { getCurrentUser } from "aws-amplify/auth";
 import { useClient } from "contexts/ClientContext";
-import { ICompany, ICompanyState } from "interfaces";
+import { ICompanyState } from "interfaces";
 import { useSelector } from "react-redux";
 import { selectCompanyState } from "@redux/reducers/companyReducer";
 
-const FileManagerPage = (/* { params }: { params: { companyId: string } } */) => {
+const FileManagerPage: React.FC = () => {
   const companyState: ICompanyState = useSelector(selectCompanyState);
-  const { selectedCompanyId: companyId, selectedCompany } = companyState;
-  // console.log("companyId: ", companyId, selectedCompany);
-  const client: any = useClient();
+  const { selectedCompanyId: companyId } = companyState;
+
+  const client = useClient();
   const [owners, setOwners] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const isOwner = useMemo(() => {
-    if (!owners.length || currentUser == "") return -1;
-    return owners.indexOf(currentUser) !== -1 ? 1 : 0;
+    if (!owners.length || !currentUser) return -1;
+    return owners.includes(currentUser) ? 1 : 0;
   }, [owners, currentUser]);
 
   useEffect(() => {
     const loadCurrentUserAndOwners = async () => {
-      const currentUser = await getCurrentUser();
-      const { data: company, errors } = await client.models.Company.get({
-        id: companyId,
-      });
-      const _owners = company?.members;
-      const arrayOwners = Array.isArray(_owners) ? _owners : [_owners];
+      try {
+        setLoading(true);
+        const currentUser = await getCurrentUser();
+        const { data: company, errors } = await client.models.Company.get({
+          id: companyId,
+        });
 
-      setOwners(arrayOwners);
-      setCurrentUser(currentUser.username);
+        if (errors) {
+          console.error("Error fetching company data:", errors);
+          return;
+        }
+
+        const _owners = company?.members || [];
+        const arrayOwners = Array.isArray(_owners) ? _owners : [_owners];
+
+        setOwners(arrayOwners);
+        setCurrentUser(currentUser.username);
+      } catch (error) {
+        console.error("Error loading user and owners:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-    loadCurrentUserAndOwners();
-  }, []);
 
-  return isOwner == 1 ? (
+    if (companyId) {
+      loadCurrentUserAndOwners();
+    }
+  }, [client, companyId]);
+
+  if (loading) {
+    return <h3>Loading...</h3>;
+  }
+
+  if (isOwner === 0) {
+    return <h3>You don&apos;t have access to the current storage.</h3>;
+  }
+
+  return (
     <div className="home">
-      {companyId && (<Filemanager />)}
+      {companyId && <Filemanager />}
     </div>
-  ) : isOwner == -1 ? (
-    <h3>Loading...</h3>
-  ) : (
-    <h3>You don&apos;t have access to the current storage.</h3>
   );
 };
 

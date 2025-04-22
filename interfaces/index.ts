@@ -1,293 +1,303 @@
 import { Schema } from "amplify/data/resource";
 
+// Types for Prompt
 export type PromptType = Schema["Prompt"]["type"];
 export type PromptSetType = Schema["Promptset"]["type"];
 
+// Report Interface
 export interface IReport {
-    url: string;
-    id: string;
-    title: string;
-    introduction: string;
-    matchedWords: number;
-    identicalWords: number;
-    similarWords: number;
-    paraphrasedWords: number;
-    totalWords: number;
-    metadata: Record<string, unknown>;
-    tags: string[];
-};
+  readonly url: string;
+  readonly id: string;
+  readonly title: string;
+  readonly introduction: string;
+  readonly matchedWords: number;
+  readonly identicalWords: number;
+  readonly similarWords: number;
+  readonly paraphrasedWords: number;
+  readonly totalWords: number;
+  readonly metadata: Record<string, unknown>;
+  readonly tags: string[];
+}
 
 // File Manager Interfaces
-
 export type IID = string | number;
+
 export interface IParentFolder {
-  parentFolder: {
-    _id: string;
-    name: string;
-    ancestor: string;
-    children: object[];
-    designation: string;
+  readonly parentFolder: {
+    readonly _id: string;
+    readonly name: string;
+    readonly ancestor: string;
+    readonly children: object[];
+    readonly designation: string;
   };
 }
 
-export type IFilePath = {
-  id: IID;
-  name: string;
-  index: number;
-};
+export interface IFilePath {
+  readonly id: IID;
+  readonly name: string;
+  readonly index: number;
+}
 
-export type IFile = {
-  children: IFile[];
-  id: IID;
-  name: string;
-  isFolder: boolean;
-  parentId: string | number;
-  color: string;
-  index?: number | string;
-  path: string;
-};
+export interface IFile {
+  readonly children: IFile[];
+  readonly id: IID;
+  readonly name: string;
+  readonly isFolder: boolean;
+  readonly parentId: IID;
+  readonly color: string;
+  readonly index?: number | string;
+  readonly path: string;
+}
 
 export interface IFolderState {
-  data: IFile | {};
-  subFolder: IFile[];
-  path: IFilePath[];
-  pathTree: IFile[][];
-  currentPath: string;
-  isLoading: boolean;
-  stagedFile: { stageType: "copy" | "cut" | "none"; file: IFile | {} };
-  activeFolder: { id: string | number; editable: boolean };
-  selectedFilePath: string | null;
+  readonly data: IFile | {};
+  readonly subFolder: IFile[];
+  readonly path: IFilePath[];
+  readonly pathTree: IFile[][];
+  readonly currentPath: string;
+  readonly isLoading: boolean;
+  readonly stagedFile: IStagedFile;
+  readonly activeFolder: { id: IID; editable: boolean };
+  readonly selectedFilePath: string | null;
 }
 
 export interface IFileComProps {
-  file: IFile;
-  index: number;
-  sourceFile: IFile | null;
-  targetId: IID | null;
-  setSourceFile: React.Dispatch<React.SetStateAction<IFile | null>>;
-  setTargetId: React.Dispatch<React.SetStateAction<IID | null>>;
-  handleOnOpenFolder: (folder: IFile, index: number) => void;
-};
-
-export type IStagedFile = { stageType: "copy" | "cut"; file: IFile };
-
-export type IConfirmDialog = {
-  open: boolean;
-  title: string;
-  content: string;
-  isConfirm: boolean;
-  handleConfirm: () => void;
-};
-
-
-// Company State
-export interface IPillar {
-    pillar_name: string;
-    pillar_details: string;
+  readonly file: IFile;
+  readonly index: number;
+  readonly sourceFile: IFile | null;
+  readonly targetId: IID | null;
+  readonly setSourceFile: React.Dispatch<React.SetStateAction<IFile | null>>;
+  readonly setTargetId: React.Dispatch<React.SetStateAction<IID | null>>;
+  readonly handleOnOpenFolder: (folder: IFile, index: number) => void;
 }
-  
+
+export type IStagedFile = { stageType: "copy" | "cut" | "none"; file: IFile };
+
+// Dialog Interface
+export interface IConfirmDialog {
+  readonly open: boolean;
+  readonly title: string;
+  readonly content: string;
+  readonly isConfirm: boolean;
+  readonly handleConfirm: () => void;
+}
+
+// Company State Interfaces
+export interface IPillar {
+  readonly pillar_name: string;
+  readonly pillar_details: string;
+}
+
 export interface IPersona {
-    persona_name: string;
-    persona_details: string;
+  readonly persona_name: string;
+  readonly persona_details: string;
 }
 
 export interface ISocial {
-    platform: string;
-    handle: string;
+  readonly platform: string;
+  readonly handle: string;
 }
+
 export interface IBrandToneKeyword {
-  use: string,
-  avoid: string
+  readonly use: string;
+  readonly avoid: string;
 }
 
 export interface INewCompany {
-  [key: string]: any; 
-  companyName: string;
-  companyBackground: string;
-  companyWebsite: string;
-  socials: ISocial[],
+  readonly companyName: string;
+  readonly companyBackground: string;
+  readonly companyWebsite: string;
+  readonly socials: ISocial[];
+  readonly [key: string]: unknown;
 }
 
 export interface IKeyword {
-  id: string;
-  productId: string;
-  keyword: string;
-  title: string;
-  description: string;
-  phase: string;
-  templateType: string;
-  templateTypeId: string;
-  relatableContent: string;
-  status: string;
-  sme: string;
-  titleAndPersona: string;
-  relatedKeywords: string[];
-  genPersona: string;
-  genMainTakeAway: string;
-  genSuggestedTitles: string[];
-  approvedTitle: string;
-  genPreOutline: string;
-  genPreOutlineJson: string; //a.json(),
-  genMarkteingInfoJson: string; // a.json(),
-  genMarketingInfo: string;
-  genKeyTakeAways: string[];
-  genAltTitles: string[];
-  genSeoTitle: string;
-  genSeoMetaData: string;
-  genSeoMetadataJson: string; //a.json(),
-  genSocialPosts:  string; //a.json(),
-  usagePromptTokens: number;
-  usageCompletionTokens: number;
-  usageTotalTokens: number;
-  preOutlineStartApproval: boolean;
-  preOutlineAutoGenerated: boolean;
-  preOutlineResultApproved: boolean;
-  outlineStartApproval: boolean;
-  outlineAutoGenerated: boolean;
-  outlineResultApproved: boolean;
-  draftGenerated: boolean;
-  draftApproved: boolean;
-  marketingInfoStartApproval: boolean;
-  marketingInfoAutoGenerated: boolean;
-  marketingInfoResultApproved: boolean;
-  socialsInfoStartApproval: boolean;
-  socialsInfoAutoGenerated: boolean;
-  socialsInfoResultApproved: boolean;
-  evalStartApproval: boolean;
-  evalAutoGenerated: boolean;
-  evalResultApproved: boolean;
-  contentRepurposingStartApproval: boolean;
-  socialGenerated: boolean;
-  drafts?: any[]; //a.hasMany("Draft", "keywordId"),
+  readonly id: string;
+  readonly productId: string;
+  readonly keyword: string;
+  readonly title: string;
+  readonly description: string;
+  readonly phase: string;
+  readonly templateType: string;
+  readonly templateTypeId: string;
+  readonly relatableContent: string;
+  readonly status: string;
+  readonly sme: string;
+  readonly titleAndPersona: string;
+  readonly relatedKeywords: string[];
+  readonly genPersona: string;
+  readonly genMainTakeAway: string;
+  readonly genSuggestedTitles: string[];
+  readonly approvedTitle: string;
+  readonly genPreOutline: string;
+  readonly genPreOutlineJson: string;
+  readonly genMarkteingInfoJson: string;
+  readonly genMarketingInfo: string;
+  readonly genKeyTakeAways: string[];
+  readonly genAltTitles: string[];
+  readonly genSeoTitle: string;
+  readonly genSeoMetaData: string;
+  readonly genSeoMetadataJson: string;
+  readonly genSocialPosts: string;
+  readonly usagePromptTokens: number;
+  readonly usageCompletionTokens: number;
+  readonly usageTotalTokens: number;
+  readonly preOutlineStartApproval: boolean;
+  readonly preOutlineAutoGenerated: boolean;
+  readonly preOutlineResultApproved: boolean;
+  readonly outlineStartApproval: boolean;
+  readonly outlineAutoGenerated: boolean;
+  readonly outlineResultApproved: boolean;
+  readonly draftGenerated: boolean;
+  readonly draftApproved: boolean;
+  readonly marketingInfoStartApproval: boolean;
+  readonly marketingInfoAutoGenerated: boolean;
+  readonly marketingInfoResultApproved: boolean;
+  readonly socialsInfoStartApproval: boolean;
+  readonly socialsInfoAutoGenerated: boolean;
+  readonly socialsInfoResultApproved: boolean;
+  readonly evalStartApproval: boolean;
+  readonly evalAutoGenerated: boolean;
+  readonly evalResultApproved: boolean;
+  readonly contentRepurposingStartApproval: boolean;
+  readonly socialGenerated: boolean;
+  readonly drafts?: unknown[];
 }
 
 export interface IProduct {
-  id: string;
-  productName: string;
-  productValueProp: string;
-  productFeature: string;
-  productCtaURL: string;
-  status: string;
-  keywords?: IKeyword[];
+  readonly id: string;
+  readonly productName: string;
+  readonly productValueProp: string;
+  readonly productFeature: string;
+  readonly productCtaURL: string;
+  readonly status: string;
+  readonly keywords?: IKeyword[];
 }
 
 export interface ICompany {
-    [key: string]: any; 
-    id: string;
-    companyName: string;
-    companyBackground: string;
-    companyWebsite: string;
-    socials: ISocial[],
-    brandPromise: string;
-    brandTone: string;
-    brandToneSentiments: any[];
-    brandToneKeywords: IBrandToneKeyword;
-
-    brandValueProp: string;
-    brandPersonas: IPersona[],
-    brandContentPillars: IPillar[],
-    status: string;
-    companyTypes: "SERVICES" | "PRODUCTS" | "OTHER";
-
-    members: string[];
-    products?: IProduct[];
-    iterations: any[];
-    threads: any[];
-    joinCodes: any[];
-    AIrequests: any[];
-
-    slider_1_c2p: number;
-    slider_2_t2t: number;
-    slider_3_i2p: number;
-    slider_4_p2r: number;
-    slider_5_u2c: number;
+  readonly id: string;
+  readonly companyName: string;
+  readonly companyBackground: string;
+  readonly companyWebsite: string;
+  readonly socials: ISocial[];
+  readonly brandPromise: string;
+  readonly brandTone: string;
+  readonly brandToneSentiments: unknown[];
+  readonly brandToneKeywords: IBrandToneKeyword;
+  readonly brandValueProp: string;
+  readonly brandPersonas: IPersona[];
+  readonly brandContentPillars: IPillar[];
+  readonly status: string;
+  readonly companyTypes: "SERVICES" | "PRODUCTS" | "OTHER";
+  readonly members: string[];
+  readonly products?: IProduct[];
+  readonly iterations: unknown[];
+  readonly threads: unknown[];
+  readonly joinCodes: unknown[];
+  readonly AIrequests: unknown[];
+  readonly slider_1_c2p: number;
+  readonly slider_2_t2t: number;
+  readonly slider_3_i2p: number;
+  readonly slider_4_p2r: number;
+  readonly slider_5_u2c: number;
 }
 
 export interface ITag {
-  id: string;
-  tagName: string;
-  /* owners: string[];
-  tools: ITool[]; */
+  readonly id: string;
+  readonly tagName: string;
 }
 
 export interface ITool {
-  id: string;
-  name: string;
-  toolDescription: string;
-  tags: ITag[];
-  toolEndUserMessage: string;
-  inputs: string;
-  status: "DRAFT" | "ACTIVE" | "PENDING" | "INACTIVE" | "ARCHIVED" | "INPROGRESS" | "ERROR";
-  assistantId: string;
-  userMessage: string;
-  toolImageURL: string;
-  toolAdditionalInstructions: string;
-  toolFunctions: string;
-  toolOptions: string;
-  isFeatured: boolean;
-  owners: string[];
-  instructions: string;
-  createdAt: string;
+  readonly id: string;
+  readonly name: string;
+  readonly toolDescription: string;
+  readonly tags: ITag[];
+  readonly toolEndUserMessage: string;
+  readonly inputs: string;
+  readonly status:
+    | "DRAFT"
+    | "ACTIVE"
+    | "PENDING"
+    | "INACTIVE"
+    | "ARCHIVED"
+    | "INPROGRESS"
+    | "ERROR";
+  readonly assistantId: string;
+  readonly userMessage: string;
+  readonly toolImageURL: string;
+  readonly toolAdditionalInstructions: string;
+  readonly toolFunctions: string;
+  readonly toolOptions: string;
+  readonly isFeatured: boolean;
+  readonly owners: string[];
+  readonly instructions: string;
+  readonly createdAt: string;
 }
 
 export interface IMessage {
-  id: string;
-  threadId: string;
-  content: string;
-  aiMessageId: string;
-  role: string;
-  user: string;
+  readonly id: string;
+  readonly threadId: string;
+  readonly content: string;
+  readonly aiMessageId: string;
+  readonly role: string;
+  readonly user: string;
 }
 
 export interface IThread {
-  id: string;
-  name: string;
-  companyId: string;
-  aiThreadId: string;
-  runId: string;
-  toolId: string;
-  intialPayload: string;
-  summary: string;
-  status: "DRAFT" | "PENDING" | "INPROGRESS" | "ERROR" | "COMPLETED" | "FAILED";
-/*   company */
-  messages: IMessage[];
-  owners: string[];
+  readonly id: string;
+  readonly name: string;
+  readonly companyId: string;
+  readonly aiThreadId: string;
+  readonly runId: string;
+  readonly toolId: string;
+  readonly intialPayload: string;
+  readonly summary: string;
+  readonly status:
+    | "DRAFT"
+    | "PENDING"
+    | "INPROGRESS"
+    | "ERROR"
+    | "COMPLETED"
+    | "FAILED";
+  readonly messages: IMessage[];
+  readonly owners: string[];
 }
+
 export interface ICompanyState {
-  companies: ICompany[];
-  selectedIndex: number | null;
-  selectedCompany: ICompany | null;
-  selectedCompanyId: string | null;
-  isUpdatedFromServer: boolean;
-  tools: ITool[];
-  selectedTool: ITool | null;
-  selectedThread: IThread | null;
-  editToolByAdmin: ITool | null;
-  selectedProduct?: IProduct | null;
+  readonly companies: ICompany[];
+  readonly selectedIndex: number | null;
+  readonly selectedCompany: ICompany | null;
+  readonly selectedCompanyId: string | null;
+  readonly isUpdatedFromServer: boolean;
+  readonly tools: ITool[];
+  readonly selectedTool: ITool | null;
+  readonly selectedThread: IThread | null;
+  readonly editToolByAdmin: ITool | null;
+  readonly selectedProduct?: IProduct | null;
 }
 
 export interface IAIEditorState {
-  aiEditorData: {
-    content: string;
-    completionApi: string;
-    gptModel: string;
-    gptTemp: number;
-    gptUserPrt: string;
-    gptSysPrt: string;
-    gptHighlight: string;
-    gptArbVars: { [key: string]: string };
-    gptTopP: number;
-    gptMaxTokens: number;
-    textToInsert: string;
-    textFull: string;
-    promptSets: PromptSetType[];
-    selectedPromptSetId: string | null;
-    selectedPromptId: string | null;
-    llmOpt: string;
-    scanId: string;
-    reports: IReport[];
-    isScanning: boolean;
-    novelEditor: any;
-    reportDetail: any;
+  readonly aiEditorData: {
+    readonly content: string;
+    readonly completionApi: string;
+    readonly gptModel: string;
+    readonly gptTemp: number;
+    readonly gptUserPrt: string;
+    readonly gptSysPrt: string;
+    readonly gptHighlight: string;
+    readonly gptArbVars: Record<string, string>;
+    readonly gptTopP: number;
+    readonly gptMaxTokens: number;
+    readonly textToInsert: string;
+    readonly textFull: string;
+    readonly promptSets: PromptSetType[];
+    readonly selectedPromptSetId: string | null;
+    readonly selectedPromptId: string | null;
+    readonly llmOpt: string;
+    readonly scanId: string;
+    readonly reports: IReport[];
+    readonly isScanning: boolean;
+    readonly novelEditor: unknown;
+    readonly reportDetail: unknown;
   };
 }

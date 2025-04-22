@@ -1,27 +1,41 @@
 import { useEffect, useState } from "react";
 
-const useLocalStorage = <T>(
-  key: string,
-  initialValue: T,
-  // eslint-disable-next-line no-unused-vars
-): [T, (value: T) => void] => {
-  const [storedValue, setStoredValue] = useState(initialValue);
+function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
+  // State to store the current value
+  const [storedValue, setStoredValue] = useState<T>(() => {
+    try {
+      // Retrieve from localStorage
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error("Error reading localStorage key:", key, error);
+      return initialValue;
+    }
+  });
 
   useEffect(() => {
-    // Retrieve from localStorage
-    const item = window.localStorage.getItem(key);
-    if (item) {
-      setStoredValue(JSON.parse(item));
+    try {
+      const item = window.localStorage.getItem(key);
+      if (item) {
+        setStoredValue(JSON.parse(item));
+      }
+    } catch (error) {
+      console.error("Error reading localStorage key:", key, error);
     }
   }, [key]);
 
   const setValue = (value: T) => {
-    // Save state
-    setStoredValue(value);
-    // Save to localStorage
-    window.localStorage.setItem(key, JSON.stringify(value));
+    try {
+      // Save state
+      setStoredValue(value);
+      // Save to localStorage
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error("Error setting localStorage key:", key, error);
+    }
   };
+
   return [storedValue, setValue];
-};
+}
 
 export default useLocalStorage;

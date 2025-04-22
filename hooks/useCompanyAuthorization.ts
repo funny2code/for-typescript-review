@@ -1,25 +1,41 @@
 // hooks/useCompanyAuthorization.ts
 import { useEffect, useState } from "react";
-
 import { useClient } from "contexts/ClientContext";
 
-export function useCompanyAuthorization(companyId: string) {
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+interface UseCompanyAuthorizationResult {
+  isAuthorized: boolean;
+  isLoading: boolean;
+}
+
+export function useCompanyAuthorization(companyId: string): UseCompanyAuthorizationResult {
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const client = useClient();
 
   useEffect(() => {
     const checkAuthorization = async () => {
-      setIsLoading(true);
-      const { data: company, errors: getCompanyError } =
-        await client.models.Company.get({
+      try {
+        setIsLoading(true);
+        const { data: company, errors: getCompanyError } = await client.models.Company.get({
           id: companyId,
         });
-      setIsAuthorized(!getCompanyError && !!company);
-      setIsLoading(false);
+
+        setIsAuthorized(!getCompanyError && !!company);
+      } catch (error) {
+        console.error("Error checking company authorization:", error);
+        setIsAuthorized(false);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    checkAuthorization();
-  }, [companyId]);
+
+    if (companyId) {
+      checkAuthorization();
+    } else {
+      setIsAuthorized(false);
+      setIsLoading(false);
+    }
+  }, [companyId, client]);
 
   return { isAuthorized, isLoading };
 }

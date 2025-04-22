@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-
 import { useClient } from "contexts/ClientContext";
 
-export const useObserveQuery = (
-  queryFn: (client: any) => any,
+type QueryFn<T> = (client: any) => { subscribe: (callbacks: { next: (data: T) => void }) => { unsubscribe: () => void } };
+
+export const useObserveQuery = <T>(
+  queryFn: QueryFn<T>,
   dependencies: any[] = []
-) => {
+): T | null => {
   const client = useClient();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<T | null>(null);
 
   useEffect(() => {
     const subscription = queryFn(client).subscribe({
-      next: (data: any) => setData(data),
+      next: (newData: T) => setData(newData),
     });
 
     return () => subscription.unsubscribe();
-  }, dependencies);
+  }, [client, ...dependencies]);
 
   return data;
 };
